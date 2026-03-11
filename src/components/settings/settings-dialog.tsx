@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { ArrowLeft, Brain, Check, Languages, Users } from "lucide-react"
+import { useEffect, useState } from "react"
+import { ArrowLeft, Brain, Check, Languages, ShieldCheck, Users } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -15,24 +15,67 @@ import {
 } from "@/i18n"
 import { cn } from "@/lib/utils"
 import { ModelConfigPanel } from "./model-config"
+import { UsersPanel } from "@/components/admin/users-panel"
 
 interface SettingsDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-type SettingsSection = "models" | "language" | "community"
+type SettingsSection = "models" | "language" | "community" | "users"
+
+type CurrentUser = { id: string; username: string; role: "admin" | "user" }
 
 export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
   const { t } = useI18n()
   const [activeSection, setActiveSection] = useState<SettingsSection>("models")
   const [mobileShowContent, setMobileShowContent] = useState(false)
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
 
-  const navItems: { id: SettingsSection; label: string; icon: typeof Brain | typeof Languages }[] = [
+  useEffect(() => {
+    if (!open) return
+    fetch("/api/auth/me")
+      .then((r) => r.json() as Promise<CurrentUser>)
+      .then((u) => setCurrentUser(u))
+      .catch(() => {})
+  }, [open])
+
+  const isAdmin = currentUser?.role === "admin"
+
+  type NavItem = { id: SettingsSection; label: string; icon: typeof Brain | typeof Languages | typeof ShieldCheck }
+  const navItems: NavItem[] = [
     { id: "models", label: t("settings.sections.models"), icon: Brain },
     { id: "language", label: t("settings.sections.language"), icon: Languages },
     { id: "community", label: t("settings.sections.community"), icon: Users },
+    ...(isAdmin
+      ? [{ id: "users" as SettingsSection, label: t("settings.sections.users"), icon: ShieldCheck }]
+      : []),
   ]
+
+  const handleSelectSection = (id: SettingsSection) => {
+    setActiveSection(id)
+    setMobileShowContent(true)
+  }
+
+  const handleBack = () => {
+    setMobileShowContent(false)
+  }
+
+  const activeLabel = navItems.find((n) => n.id === activeSection)?.label
+
+  const sectionDescription = {
+    models: t("settings.descriptions.models"),
+    language: t("settings.descriptions.language"),
+    community: t("settings.descriptions.community"),
+    users: t("settings.descriptions.users"),
+  }[activeSection]
+
+  const handleOpenChange = (o: boolean) => {
+    if (!o) {
+      setMobileShowContent(false)
+    }
+    onOpenChange(o)
+  }
 
   const handleSelectSection = (id: SettingsSection) => {
     setActiveSection(id)
@@ -124,6 +167,9 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                 {activeSection === "models" && <ModelConfigPanel />}
                 {activeSection === "language" && <LanguageSettingsPanel />}
                 {activeSection === "community" && <CommunityPanel />}
+                {activeSection === "users" && currentUser && (
+                  <UsersPanel currentUserId={currentUser.id} />
+                )}
               </div>
             </div>
           </div>

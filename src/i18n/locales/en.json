@@ -18,7 +18,8 @@
     "memberCount": "{{count}} members",
     "selectedCount": "{{count}} selected",
     "searchPlaceholder": "Search...",
-    "back": "Back"
+    "back": "Back",
+    "loading": "Loading..."
   },
   "nav": {
     "chat": "Messages",
@@ -52,12 +53,14 @@
     "sections": {
       "models": "Model Config",
       "language": "Language",
-      "community": "Community"
+      "community": "Community",
+      "users": "Users"
     },
     "descriptions": {
       "models": "Add AI providers and configure available models",
       "language": "Follow the browser language by default, with manual override available",
-      "community": "Join the official WeChat group for updates and support"
+      "community": "Join the official WeChat group for updates and support",
+      "users": "Manage user accounts and permissions."
     },
     "community": {
       "title": "Official Community",
@@ -332,5 +335,46 @@
   },
   "changelog": {
     "title": "Changelog"
+  },
+  "login": {
+    "title": "Sign in to MossC",
+    "description": "Enter your password to continue",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter password",
+    "submit": "Sign in",
+    "submitting": "Signing in...",
+    "error": "Incorrect password. Please try again.",
+    "networkError": "Network error. Please check your connection and try again.",
+    "logout": "Sign out",
+    "loggingOut": "Signing out...",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "Enter username"
+  },
+  "setup": {
+    "title": "Create Admin Account",
+    "description": "Set up the first administrator account to secure your MossC instance.",
+    "passwordPlaceholder": "At least 8 characters",
+    "confirmPasswordLabel": "Confirm Password",
+    "confirmPasswordPlaceholder": "Re-enter password",
+    "passwordMismatch": "Passwords do not match.",
+    "error": "Failed to create admin account. Please try again.",
+    "submit": "Create Account",
+    "creating": "Creating..."
+  },
+  "userManagement": {
+    "addUser": "Add User",
+    "createUser": "Create",
+    "createFailed": "Failed to create user.",
+    "userList": "Users",
+    "userCount": "{{count}} account(s)",
+    "noUsers": "No users yet.",
+    "roleLabel": "Role",
+    "roleAdmin": "Admin",
+    "roleUser": "User",
+    "changePassword": "Change password",
+    "changePasswordFailed": "Failed to update password.",
+    "passwordChanged": "Password updated.",
+    "deleteUser": "Delete user",
+    "cannotDeleteSelf": "Cannot delete your own account."
   }
 }

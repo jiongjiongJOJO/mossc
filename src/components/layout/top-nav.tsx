@@ -1,8 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import Image from "next/image"
-import { Bug, Check, ChevronDown, Loader2, Wifi, WifiOff } from "lucide-react"
+import { Bug, Check, ChevronDown, Loader2, LogOut, Wifi, WifiOff } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useI18n } from "@/i18n"
@@ -37,8 +38,31 @@ interface TopNavProps {
 export function TopNav({ onVersionClick }: TopNavProps) {
   const { state } = useApp()
   const { t } = useI18n()
+  const router = useRouter()
   const { summary, loadSummary } = useConnectionSummary()
   const [gatewayDialogOpen, setGatewayDialogOpen] = useState(false)
+  const [currentUser, setCurrentUser] = useState<{ id: string; username: string; role: "admin" | "user" } | null>(null)
+  const [loggingOut, setLoggingOut] = useState(false)
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json() as Promise<{ id?: string; username?: string; role?: string }>)
+      .then((data) => {
+        if (data.id) setCurrentUser({ id: data.id, username: data.username ?? "", role: (data.role ?? "user") as "admin" | "user" })
+      })
+      .catch(() => { /* ignore */ })
+  }, [])
+
+  const handleLogout = async () => {
+    setLoggingOut(true)
+    try {
+      await fetch("/api/auth/logout", { method: "POST" })
+      router.push("/login")
+      router.refresh()
+    } catch {
+      setLoggingOut(false)
+    }
+  }
 
   const engineOptions = [
     { id: "openclaw", name: "OpenClaw", active: true },
@@ -162,6 +186,24 @@ export function TopNav({ onVersionClick }: TopNavProps) {
             <span className="hidden sm:inline">{t("header.bugFeedback")}</span>
           </a>
         ) : null}
+        {currentUser && (
+          <button
+            onClick={() => void handleLogout()}
+            disabled={loggingOut}
+            title={loggingOut ? t("login.loggingOut") : `${currentUser.username} — ${t("login.logout")}`}
+            className={cn(
+              buttonVariants({ variant: "ghost", size: "sm" }),
+              "h-8 text-muted-foreground gap-1.5 disabled:opacity-50"
+            )}
+          >
+            {loggingOut ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <LogOut className="h-4 w-4" />
+            )}
+            <span className="text-xs max-w-24 truncate">{currentUser.username}</span>
+          </button>
+        )}
       </div>
     </header>
   )
