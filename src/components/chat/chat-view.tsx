@@ -18,7 +18,6 @@ export function ChatView() {
   return (
     <>
       <div className="flex-1 flex overflow-hidden">
-        {/* 左侧对话列表 - 固定宽度，类飞书 */}
         {/* On mobile: hidden when a conversation is active; always shown on desktop */}
         <div className={cn(
           "shrink-0 overflow-hidden border-r bg-muted/30",
@@ -31,7 +30,6 @@ export function ChatView() {
           />
         </div>
 
-        {/* 右侧聊天区 */}
         {/* On mobile: hidden when no conversation is active; always shown on desktop */}
         <div className={cn(
           "flex-1 flex flex-col min-w-0",
